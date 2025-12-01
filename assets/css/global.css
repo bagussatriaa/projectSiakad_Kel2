@@ -1,0 +1,39 @@
+body{
+    font-family: 'Poppins', sans-serif;
+    background:#FCFCFC;
+}
+
+.sidebar{
+    width:230px;
+    height:100vh;
+    background:#F5F5DC;
+    padding:25px 20px;
+    position:fixed;
+    left:0;
+    top:0;
+}
+
+.sidebar h2{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.sidebar a{
+    display:block;
+    text-decoration:none;
+    color:#333;
+    margin-bottom:15px;
+    padding:10px 15px;
+    border-radius:10px;
+    transition:.2s;
+}
+
+.sidebar a:hover,
+.sidebar .active{
+    background:#9AB4474D;
+}
+
+.main{
+    margin-left:230px;
+    padding:30px;
+}
