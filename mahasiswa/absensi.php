@@ -1,168 +1,97 @@
-<?php $page = 'absensi'; ?>
+<<<<<<< Updated upstream
+=======
+<?php
+session_start();
+include '../koneksi/koneksi.php';
+
+if (!isset($_SESSION['role']) || $_SESSION['role'] != 'mahasiswa') {
+    header("Location: ../auth/login.php");
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
+$mhs = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM mahasiswa WHERE user_id = '$user_id'"));
+$nim = $mhs['nim'];
+?>
 
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>SIAKAD - Absensi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-
-    <!-- BOOTSTRAP -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <link rel="stylesheet" href="../assets/css/global.css">
-    <style>
-        body{
-            font-family: 'Poppins', sans-serif;
-            background:#FCFCFC;
-        }
-
-        /* .sidebar{
-            width:230px;
-            height:100vh;
-            background:#F5F5DC;
-            padding:25px 20px;
-            position:fixed;
-            left:0;
-            top:0;
-        }
-
-        .sidebar h2{
-            text-align:center;
-            margin-bottom:40px;
-        }
-
-        .sidebar a{
-            display:block;
-            text-decoration:none;
-            color:#333;
-            margin-bottom:15px;
-            padding:10px 15px;
-            border-radius:10px;
-            transition:.2s;
-        } */
-
-        /* .sidebar a:hover,
-        .sidebar .active{
-            background:#9AB4474D;
-        } */
-
-        .main{
-            margin-left:230px;
-            padding:30px;
-        }
-
-        .card-custom{
-            background:#ffffff;
-            border-radius:16px;
-            box-shadow:0 4px 12px rgba(0,0,0,.05);
-        }
-
-        .btn-custom{
-            background:#9AB447;
-            color:#fff;
-            border:none;
-        }
-
-        .btn-custom:hover{
-            background:#7f983a;
-            color:#fff;
-        }
-
-        th{
-            background:#F5F5DC !important;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <title>Riwayat Absensi - Mahasiswa</title>
+    <link rel="stylesheet" href="http://localhost/projectSiakad_Kel2/style.css">
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<?php include '../components/sidebar.php'; ?>
-
-
-<!-- MAIN CONTENT -->
-<div class="main">
-
-    <h3 class="mb-4">Absensi Mahasiswa 📝</h3>
-
-    <!-- FORM ABSENSI -->
-    <div class="card card-custom p-4 mb-5 col-lg-6">
-        <h5 class="mb-3">Form Absensi</h5>
-
-        <form method="POST">
-
-            <div class="mb-3">
-                <label class="form-label">Mata Kuliah</label>
-                <select class="form-select" name="mata_kuliah" required>
-                    <option value="">-- Pilih Mata Kuliah --</option>
-                    <option>Pemrograman Web</option>
-                    <option>Basis Data</option>
-                    <option>Jaringan Komputer</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Pertemuan ke-</label>
-                <select class="form-select" name="pertemuan" required>
-                    <?php for($i=1;$i<=16;$i++): ?>
-                        <option>Pertemuan <?= $i ?></option>
-                    <?php endfor; ?>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label d-block">Status Kehadiran</label>
-                
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="status" value="Hadir" required>
-                    <label class="form-check-label">Hadir</label>
-                </div>
-
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="status" value="Tidak Hadir">
-                    <label class="form-check-label">Tidak Hadir</label>
-                </div>
-            </div>
-
-            <button class="btn btn-custom px-4">Kirim Absensi</button>
-
-        </form>
+<div class="dashboard-container">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>SIAKAD VOKASI</h3>
+            <small>Mahasiswa: <?= $mhs['nama'] ?></small>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="../dashboard/dashboard_mahasiswa.php">Dashboard</a></li>
+            <li><a href="krs.php">Isi KRS</a></li>
+            <li><a href="nilai.php">Lihat KHS / Nilai</a></li>
+            <li><a href="absensi.php" class="active">Riwayat Absensi</a></li>
+            <li><a href="tugas.php">Tugas Saya</a></li>
+            <li><a href="../auth/logout.php">Logout</a></li>
+        </ul>
     </div>
 
-    <!-- RIWAYAT -->
-    <h5 class="mb-3">Riwayat Absensi</h5>
+    <div class="main-content">
+        <div class="header">
+            <h2>Riwayat Kehadiran</h2>
+        </div>
 
-    <div class="table-responsive col-lg-8">
-        <table class="table table-bordered bg-white rounded-4 overflow-hidden">
-            <thead>
-                <tr>
-                    <th>Mata Kuliah</th>
-                    <th>Pertemuan</th>
-                    <th>Tanggal</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr>
-                    <td>Pemrograman Web</td>
-                    <td>1</td>
-                    <td>02 Juni 2025</td>
-                    <td><span class="badge bg-success">Hadir</span></td>
-                </tr>
-
-                <tr>
-                    <td>Basis Data</td>
-                    <td>1</td>
-                    <td>03 Juni 2025</td>
-                    <td><span class="badge bg-danger">Tidak Hadir</span></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="card">
+            <h3>Rekap Kehadiran Per Mata Kuliah</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Mata Kuliah</th>
+                            <th>Pertemuan Ke</th>
+                            <th>Tanggal</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $query = "SELECT a.*, mk.nama_mk 
+                                  FROM absensi a
+                                  JOIN mata_kuliah mk ON a.mata_kuliah_id = mk.id
+                                  WHERE a.mahasiswa_nim = '$nim'
+                                  ORDER BY mk.nama_mk ASC, a.pertemuan_ke ASC";
+                        
+                        $result = mysqli_query($koneksi, $query);
+                        
+                        if(mysqli_num_rows($result) > 0):
+                            while($row = mysqli_fetch_assoc($result)):
+                                $status_color = 'badge-secondary';
+                                if($row['status'] == 'hadir') $status_color = 'badge-success';
+                                elseif($row['status'] == 'alpha') $status_color = 'badge-danger';
+                                elseif($row['status'] == 'sakit') $status_color = 'badge-warning';
+                        ?>
+                        <tr>
+                            <td><?= $row['nama_mk'] ?></td>
+                            <td>Pertemuan <?= $row['pertemuan_ke'] ?></td>
+                            <td><?= date('d M Y', strtotime($row['tanggal'])) ?></td>
+                            <td>
+                                <span class="badge <?= $status_color ?>"><?= strtoupper($row['status']) ?></span>
+                            </td>
+                        </tr>
+                        <?php endwhile; ?>
+                        <?php else: ?>
+                            <tr><td colspan="4" align="center">Belum ada data absensi.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <p class="text-muted mt-5">© 2025 SIAKAD Vokasi | Absensi Mahasiswa</p>
-
 </div>
 
 </body>
 </html>
+>>>>>>> Stashed changes
