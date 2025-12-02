@@ -8,27 +8,40 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'orang_tua') {
 }
 
 $user_id = $_SESSION['user_id'];
-// Cari data Orang Tua
 $ortu = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT * FROM orang_tua WHERE user_id = '$user_id'"));
 $ortu_id = $ortu['id'];
 
-// Cari data Mahasiswa (Anak)
 $query_anak = mysqli_query($koneksi, "SELECT * FROM mahasiswa WHERE orang_tua_id = '$ortu_id'");
 $anak = mysqli_fetch_assoc($query_anak);
 
 if (!$anak) {
-    echo "Data anak tidak ditemukan. Hubungi admin.";
+    echo "<script>alert('Data anak tidak ditemukan!'); window.location='../dashboard/dashboard_ortu.php';</script>";
     exit;
 }
-
 $nim_anak = $anak['nim'];
-?>
 
+// Hitung Statistik Absensi Real
+$q_hadir = mysqli_query($koneksi, "SELECT COUNT(*) as tot FROM absensi WHERE mahasiswa_nim='$nim_anak' AND status='hadir'");
+$d_hadir = mysqli_fetch_assoc($q_hadir);
+
+$q_sakit = mysqli_query($koneksi, "SELECT COUNT(*) as tot FROM absensi WHERE mahasiswa_nim='$nim_anak' AND status='sakit'");
+$d_sakit = mysqli_fetch_assoc($q_sakit);
+
+$q_ijin = mysqli_query($koneksi, "SELECT COUNT(*) as tot FROM absensi WHERE mahasiswa_nim='$nim_anak' AND status='ijin'");
+$d_ijin = mysqli_fetch_assoc($q_ijin);
+
+$q_alpha = mysqli_query($koneksi, "SELECT COUNT(*) as tot FROM absensi WHERE mahasiswa_nim='$nim_anak' AND status='alpha'");
+$d_alpha = mysqli_fetch_assoc($q_alpha);
+
+$total_pertemuan = $d_hadir['tot'] + $d_sakit['tot'] + $d_ijin['tot'] + $d_alpha['tot'];
+$persentase_hadir = ($total_pertemuan > 0) ? ($d_hadir['tot'] / $total_pertemuan) * 100 : 0;
+
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Monitoring - Orang Tua</title>
+    <title>Monitoring Anak</title>
     <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -48,75 +61,84 @@ $nim_anak = $anak['nim'];
 
     <div class="main-content">
         <div class="header">
-            <h2>Monitoring Akademik: <?= $anak['nama'] ?> (<?= $anak['nim'] ?>)</h2>
+            <h2>Monitoring: <?= $anak['nama'] ?> (<?= $anak['nim'] ?>)</h2>
         </div>
 
         <div class="card-container">
-            <!-- Monitoring Nilai -->
+            <!-- Card Absensi Ringkas -->
+            <div class="card">
+                <h3>Kehadiran</h3>
+                <div style="display:flex; justify-content:space-around; text-align:center; margin-top:20px;">
+                    <div>
+                        <h2 style="color:var(--primary); margin:0;"><?= $d_hadir['tot'] ?></h2>
+                        <small>Hadir</small>
+                    </div>
+                    <div>
+                        <h2 style="color:var(--warning); margin:0;"><?= $d_sakit['tot'] + $d_ijin['tot'] ?></h2>
+                        <small>Ijin/Sakit</small>
+                    </div>
+                    <div>
+                        <h2 style="color:var(--danger); margin:0;"><?= $d_alpha['tot'] ?></h2>
+                        <small>Alpha</small>
+                    </div>
+                </div>
+                <hr>
+                <p style="text-align:center; font-weight:bold;">Persentase: <?= number_format($persentase_hadir, 1) ?>%</p>
+            </div>
+
+            <!-- Card Nilai Ringkas -->
             <div class="card" style="grid-column: span 2;">
-                <h3>Perkembangan Nilai Studi</h3>
+                <h3>Transkrip Nilai Sementara</h3>
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
                             <tr>
                                 <th>Mata Kuliah</th>
-                                <th>Jenis</th>
-                                <th>Nilai</th>
-                                <th>Predikat</th>
+                                <th>Nilai Akhir</th>
+                                <th>Grade</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
-                            $q_nilai = mysqli_query($koneksi, "SELECT n.*, mk.nama_mk 
-                                                              FROM nilai n 
-                                                              JOIN mata_kuliah mk ON n.mata_kuliah_id = mk.id
-                                                              WHERE n.mahasiswa_nim = '$nim_anak'
-                                                              ORDER BY mk.nama_mk ASC");
-                            while($n = mysqli_fetch_assoc($q_nilai)):
+                            // Ambil Mata Kuliah Anak
+                            $q_mk_anak = mysqli_query($koneksi, "SELECT mk.id, mk.nama_mk 
+                                                                FROM krs_detail kd 
+                                                                JOIN krs k ON kd.krs_id = k.id 
+                                                                JOIN mata_kuliah mk ON kd.mata_kuliah_id = mk.id 
+                                                                WHERE k.mahasiswa_nim = '$nim_anak' AND k.status = 'disetujui'");
+                            
+                            $found_nilai = false;
+                            while($mk = mysqli_fetch_assoc($q_mk_anak)):
+                                $mk_id = $mk['id'];
+                                // Hitung Nilai Rata-rata seperti logic mahasiswa
+                                $q_n = mysqli_query($koneksi, "SELECT jenis_nilai, AVG(nilai) as rata FROM nilai WHERE mahasiswa_nim='$nim_anak' AND mata_kuliah_id='$mk_id' GROUP BY jenis_nilai");
+                                
+                                $nt=0; $nq=0; $nut=0; $nua=0;
+                                while($n = mysqli_fetch_assoc($q_n)) {
+                                    if($n['jenis_nilai'] == 'tugas') $nt = $n['rata'];
+                                    if($n['jenis_nilai'] == 'quiz') $nq = $n['rata'];
+                                    if($n['jenis_nilai'] == 'uts') $nut = $n['rata'];
+                                    if($n['jenis_nilai'] == 'uas') $nua = $n['rata'];
+                                }
+                                
+                                $na = ($nt * 0.2) + ($nq * 0.1) + ($nut * 0.3) + ($nua * 0.4);
+                                
+                                if($na > 0): $found_nilai = true;
+                                    $gr = ($na >= 80) ? 'A' : (($na >= 70) ? 'B' : (($na >= 60) ? 'C' : 'D/E'));
                             ?>
                             <tr>
-                                <td><?= $n['nama_mk'] ?></td>
-                                <td><?= strtoupper($n['jenis_nilai']) ?></td>
-                                <td><strong><?= $n['nilai'] ?></strong></td>
-                                <td>
-                                    <?php 
-                                        if($n['nilai'] >= 80) echo 'A (Sangat Baik)';
-                                        elseif($n['nilai'] >= 70) echo 'B (Baik)';
-                                        elseif($n['nilai'] >= 60) echo 'C (Cukup)';
-                                        else echo 'D/E (Kurang)';
-                                    ?>
-                                </td>
+                                <td><?= $mk['nama_mk'] ?></td>
+                                <td><strong><?= number_format($na, 2) ?></strong></td>
+                                <td><span class="badge badge-secondary"><?= $gr ?></span></td>
                             </tr>
-                            <?php endwhile; ?>
+                            <?php endif; endwhile; ?>
+                            
+                            <?php if(!$found_nilai): ?>
+                            <tr><td colspan="3" align="center">Belum ada nilai yang diinput Dosen.</td></tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
-            </div>
-
-            <!-- Monitoring Absensi -->
-            <div class="card">
-                <h3>Statistik Kehadiran</h3>
-                <?php 
-                // Hitung Alpha
-                $q_alpha = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM absensi WHERE mahasiswa_nim = '$nim_anak' AND status = 'alpha'");
-                $d_alpha = mysqli_fetch_assoc($q_alpha);
-                
-                // Hitung Hadir
-                $q_hadir = mysqli_query($koneksi, "SELECT COUNT(*) as total FROM absensi WHERE mahasiswa_nim = '$nim_anak' AND status = 'hadir'");
-                $d_hadir = mysqli_fetch_assoc($q_hadir);
-                ?>
-                <div style="text-align:center; padding: 20px;">
-                    <div style="font-size: 30px; font-weight:bold; color: #28a745;"><?= $d_hadir['total'] ?></div>
-                    <small>Total Hadir</small>
-                    <hr>
-                    <div style="font-size: 30px; font-weight:bold; color: #dc3545;"><?= $d_alpha['total'] ?></div>
-                    <small>Total Alpha (Tanpa Keterangan)</small>
-                </div>
-                <?php if($d_alpha['total'] > 3): ?>
-                    <div class="alert alert-danger" style="margin-top:10px;">
-                        <strong>Peringatan!</strong> Absensi anak Anda sudah mengkhawatirkan. Mohon hubungi Dosen Wali.
-                    </div>
-                <?php endif; ?>
             </div>
         </div>
     </div>
