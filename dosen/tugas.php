@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 <?php
 session_start();
 include '../koneksi/koneksi.php';
@@ -37,7 +35,7 @@ if (isset($_POST['tambah_tugas'])) {
 <head>
     <meta charset="UTF-8">
     <title>Kelola Tugas - Dosen</title>
-    <link rel="stylesheet" href="http://localhost/projectSiakad_Kel2/style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
@@ -138,4 +136,3 @@ if (isset($_POST['tambah_tugas'])) {
 
 </body>
 </html>
->>>>>>> Stashed changes

@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 <?php
 session_start();
 include '../koneksi/koneksi.php';
@@ -51,7 +49,7 @@ $sudah_krs = mysqli_num_rows($cek_krs) > 0;
 <head>
     <meta charset="UTF-8">
     <title>KRS Mahasiswa</title>
-    <link rel="stylesheet" href="http://localhost/projectSiakad_Kel2/style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
@@ -157,4 +155,3 @@ $sudah_krs = mysqli_num_rows($cek_krs) > 0;
 
 </body>
 </html>
->>>>>>> Stashed changes

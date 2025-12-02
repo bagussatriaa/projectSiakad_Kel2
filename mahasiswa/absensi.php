@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 <?php
 session_start();
 include '../koneksi/koneksi.php';
@@ -19,7 +17,7 @@ $nim = $mhs['nim'];
 <head>
     <meta charset="UTF-8">
     <title>Riwayat Absensi - Mahasiswa</title>
-    <link rel="stylesheet" href="http://localhost/projectSiakad_Kel2/style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
@@ -94,4 +92,3 @@ $nim = $mhs['nim'];
 
 </body>
 </html>
->>>>>>> Stashed changes

@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 <?php
 session_start();
 include '../koneksi/koneksi.php';
@@ -37,7 +35,7 @@ if (isset($_POST['simpan_absensi'])) {
 <head>
     <meta charset="UTF-8">
     <title>Absensi - Dosen</title>
-    <link rel="stylesheet" href="http://localhost/projectSiakad_Kel2/style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
@@ -152,4 +150,3 @@ if (isset($_POST['simpan_absensi'])) {
 
 </body>
 </html>
->>>>>>> Stashed changes

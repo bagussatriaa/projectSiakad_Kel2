@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 <?php
 session_start();
 // Cek Login & Role
@@ -13,7 +11,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'orang_tua') {
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Orang Tua</title>
-    <link rel="stylesheet" href="http://localhost/projectSiakad_Kel2/style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
@@ -52,4 +50,3 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'orang_tua') {
 
 </body>
 </html>
->>>>>>> Stashed changes

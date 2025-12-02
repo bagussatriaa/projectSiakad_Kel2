@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 <?php
 session_start();
 include '../koneksi/koneksi.php';
@@ -31,7 +29,7 @@ $nim_anak = $anak['nim'];
 <head>
     <meta charset="UTF-8">
     <title>Monitoring - Orang Tua</title>
-    <link rel="stylesheet" href="http://localhost/projectSiakad_Kel2/style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
@@ -126,4 +124,3 @@ $nim_anak = $anak['nim'];
 
 </body>
 </html>
->>>>>>> Stashed changes

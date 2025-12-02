@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 <?php
 // auth/login.php
 session_start();
@@ -62,7 +60,7 @@ if (isset($_POST['login'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SIAKAD Vokasi USU</title>
     <!-- CSS Eksternal -->
-    <link rel="stylesheet" href="http://localhost/projectSiakad_Kel2/style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
@@ -91,4 +89,3 @@ if (isset($_POST['login'])) {
 
 </body>
 </html>
->>>>>>> Stashed changes

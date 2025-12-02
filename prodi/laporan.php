@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 <?php
 session_start();
 include '../koneksi/koneksi.php';
@@ -15,7 +13,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'prodi') {
 <head>
     <meta charset="UTF-8">
     <title>Laporan Akademik</title>
-    <link rel="stylesheet" href="http://localhost/projectSiakad_Kel2/style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 <body>
 
@@ -83,4 +81,3 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] != 'prodi') {
 
 </body>
 </html>
->>>>>>> Stashed changes
